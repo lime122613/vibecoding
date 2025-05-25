@@ -35,13 +35,21 @@ if uploaded_file:
     center_lat = filtered['위도'].astype(float).mean() if not filtered.empty else 37.5665
     center_lon = filtered['경도'].astype(float).mean() if not filtered.empty else 126.9780
     m = folium.Map(location=[center_lat, center_lon], zoom_start=13)
-
+    
+    def format_time(hhmm):
+        if pd.isnull(hhmm):
+            return "-"
+        s = str(hhmm).zfill(4)
+        h = int(s[:2])
+        m = int(s[2:])
+        return f"{h}:{m:02d}"
+    
     for _, row in filtered.iterrows():
         tooltip_text = (
             f"총 주차면: {row['총 주차면']}\n"
-            f"평일 운영: {row['평일 운영 시작시각(HHMM)']} ~ {row['평일 운영 종료시각(HHMM)']}\n"
-            f"주말 운영: {row['주말 운영 시작시각(HHMM)']} ~ {row['주말 운영 종료시각(HHMM)']}\n"
-            f"공휴일 운영: {row['공휴일 운영 시작시각(HHMM)']} ~ {row['공휴일 운영 종료시각(HHMM)']}\n"
+            f"평일 운영: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}\n"
+            f"주말 운영: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}\n"
+            f"공휴일 운영: {format_time(row['공휴일 운영 시작시각(HHMM)'])} ~ {format_time(row['공휴일 운영 종료시각(HHMM)'])}\n"
             f"기본요금: {row['기본 주차 요금']}"
         )
         popup_text = f"""
