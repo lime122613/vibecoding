@@ -46,10 +46,10 @@ if uploaded_file:
     
     for _, row in filtered.iterrows():
         tooltip_text = (
-            f"총 주차면: {row['총 주차면']}\n"
-            f"평일 운영: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}\n"
-            f"주말 운영: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}\n"
-            f"공휴일 운영: {format_time(row['공휴일 운영 시작시각(HHMM)'])} ~ {format_time(row['공휴일 운영 종료시각(HHMM)'])}\n"
+            f"총 주차면: {row['총 주차면']}<br>"
+            f"평일 운영: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}<br>"
+            f"주말 운영: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}<br>"
+            f"공휴일 운영: {format_time(row['공휴일 운영 시작시각(HHMM)'])} ~ {format_time(row['공휴일 운영 종료시각(HHMM)'])}<br>"
             f"기본요금: {row['기본 주차 요금']}"
         )
         popup_text = f"""
