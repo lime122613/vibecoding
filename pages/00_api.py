@@ -10,7 +10,7 @@ st.title("🚗서울시 공영주차장 요금 추천앱🪄")
 
 # 🚨 1. API KEY와 기본 주소를 입력하세요
 API_KEY = "59534c67436c696d323474466b4275"  # <- 본인 API KEY로 교체
-API_URL = "https://openapi.seoul.go.kr:8088/"  # 실제 엔드포인트는 데이터포털에서 확인
+API_URL = "http://openapi.seoul.go.kr:8088/"  # 실제 엔드포인트는 데이터포털에서 확인
 
 def get_parking_api_df(api_key, start=1, end=1000):
     # 예시: openapi.seoul.go.kr:8088/(인증키)/xml/GetParkInfo/1/1000/
