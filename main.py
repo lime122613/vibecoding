@@ -12,7 +12,7 @@ st.markdown("""
         }
     </style>
     """, unsafe_allow_html=True)
-st.title("🚗서울시 공영주차장 요금 추천 서비스🪄")
+st.title("🚗서울시 공영주차장 요금 추천 서비스")
 def format_time(hhmm):
     if pd.isnull(hhmm):
         return "-"
