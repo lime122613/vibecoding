@@ -47,7 +47,7 @@ if uploaded_file:
     for _, row in filtered.iterrows():
         tooltip_text = (
             f"총 주차면: {int(row['총 주차면'])}개<br>"
-            f"기본요금: {row['기본 주차 요금']}"
+            f"기본 주차 요금: {row['기본 주차 요금']}" <br>
             f"기본 주차 시간: {row['기본 주차 시간(분 단위)']}분<br>"
             f"평일 운영: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}<br>"
             f"주말 운영: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}<br>"
