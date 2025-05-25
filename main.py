@@ -3,17 +3,7 @@ import pandas as pd
 import folium
 from streamlit_folium import st_folium
 
-st.markdown("""
-    <style>
-        .main .block-container {
-            max-width: 1300px;
-            padding-left: 2rem;
-            padding-right: 2rem;
-         }
-
-    </style>
-    """, unsafe_allow_html=True)
-st.title("🚗서울시 공영주차장 요금 추천앱")
+st.title("🚗서울시 공영주차장 요금 추천앱🪄")
 def format_time(hhmm):
     if pd.isnull(hhmm):
         return "-"
