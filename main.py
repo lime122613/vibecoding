@@ -65,7 +65,7 @@ def calc_fee(row, total_minutes, day_type):
     return fee
     
 
-df = pd.read_csv("https://raw.githubusercontent.com/lime122613/vibecoding/refs/heads/main/seoul_public_parking.csv", encoding="cp949")
+df = pd.read_csv("https://raw.githubusercontent.com/lime122613/vibecoding/main/seoul_public_parking.csv", encoding="cp949")
 df = df.dropna(subset=['위도', '경도'])
 df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '')
 
