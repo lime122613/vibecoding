@@ -64,7 +64,7 @@ def calc_fee(row, total_minutes, day_type):
 
     return fee
     
-GITHUB_RAW_URL = "https://raw.githubusercontent.com/your-username/your-repo/main/서울시%20공영주차장%20안내%20정보.csv"
+GITHUB_RAW_URL = "서울시 공영주차장 안내 정보.csv"
 df = pd.read_csv(GITHUB_RAW_URL, encoding='cp949')
 if uploaded_file:
     df = pd.read_csv(uploaded_file, encoding='cp949')
