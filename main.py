@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
-
+st.set_page_config(layout="wide")
 st.title("🚗서울시 공영주차장 요금 추천 서비스🪄")
 
 def format_time(hhmm):
