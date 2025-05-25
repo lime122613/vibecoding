@@ -6,9 +6,9 @@ from streamlit_folium import st_folium
 st.markdown("""
     <style>
         .main .block-container {
-            max-width: 1000px;
-            padding-left: 3rem;
-            padding-right: 3rem;
+            max-width: 1200px;
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
         }
     </style>
     """, unsafe_allow_html=True)
