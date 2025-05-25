@@ -9,10 +9,10 @@ st.markdown("""
             max-width: 1300px;
             padding-left: 2rem;
             padding-right: 2rem;
+         }
          h1 {
             font-size: 2.2rem;
-        }
-        }
+         }
     </style>
     """, unsafe_allow_html=True)
 st.title("🚗서울시 공영주차장 요금 추천 서비스🪄")
