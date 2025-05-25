@@ -56,4 +56,4 @@ if uploaded_file:
 
     st_folium(m, width=1000, height=650)
 else:
-    st.info("서울시 공영주차장 안내 정보 CSV 파
+    st.info("서울시 공영주차장 안내 정보 CSV 파일을 업로드해 주세요.")
