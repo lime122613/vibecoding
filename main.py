@@ -3,7 +3,7 @@ import pandas as pd
 import folium
 from streamlit_folium import st_folium
 
-st.title("🚗서울시 공영주차장 요금 추천 서비스")
+st.title("🚗서울시 공영주차장 요금 추천 서비스🪄")
 
 def format_time(hhmm):
     if pd.isnull(hhmm):
@@ -77,10 +77,15 @@ if uploaded_file:
     filtered = df[df['구'] == selected_gu]
 
     st.markdown("---")
-    st.subheader("주차 요금 추천")
+    st.subheader("💸주차 요금 비교하기")
     day_type = st.radio("주차할 요일을 선택해주세요", ["평일", "토요일", "공휴일"])
-    total_minutes = st.number_input("예상 주차 시간(분)을 입력해주세요", min_value=10, step=10, value=60)
-
+    total_minutes = st.slider(
+    "주차할 시간(분)을 선택하세요",
+    min_value=10,
+    max_value=720,
+    step=10,
+    value=60
+)
     # 요금 계산 및 정렬
     filtered['예상요금'] = filtered.apply(lambda row: calc_fee(row, total_minutes, day_type), axis=1)
     filtered = filtered[filtered['예상요금'] != float('inf')]
