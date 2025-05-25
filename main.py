@@ -6,10 +6,22 @@ from streamlit_folium import st_folium
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file, encoding='cp949')
+    st.write("컬럼명 리스트:", df.columns.tolist())  # 컬럼명 확인
     df = df.dropna(subset=['위도', '경도'])
     df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '')
 
     st.title("서울시 공영주차장 안내 서비스")
+
+    # 자동으로 공휴일 유/무료 컬럼명 찾기
+    holi_cols = [col for col in df.columns if '공휴일' in col and '유' in col and '무' in col]
+    if holi_cols:
+        holi_col = holi_cols[0]
+        holi_types = ['전체'] + sorted(df[holi_col].dropna().unique())
+        selected_holi = st.radio("공휴일 무료/유료", holi_types, horizontal=True)
+    else:
+        holi_col = None
+        selected_holi = None
+        st.warning("공휴일 무료/유료 관련 컬럼을 찾을 수 없습니다.")
 
     # 구 선택
     gu_list = sorted(df['구'].unique())
@@ -18,20 +30,18 @@ if uploaded_file:
     # 주차장명 검색
     keyword = st.text_input("주차장명 검색 (선택)", "")
 
-    # 공휴일 유/무료 필터
-    holi_col = '공휴일 유무료 구분'
-    holi_types = ['전체'] + sorted(df[holi_col].dropna().unique())
-    selected_holi = st.radio("공휴일 무료/유료", holi_types, horizontal=True)
-
     # 필터링
     filtered = df[df['구'] == selected_gu]
     if keyword:
         filtered = filtered[filtered['주차장명'].str.contains(keyword, case=False, na=False)]
-    if selected_holi != '전체':
+    if holi_col and selected_holi and selected_holi != '전체':
         filtered = filtered[filtered[holi_col] == selected_holi]
 
     st.write(f"총 {len(filtered)}개 주차장 검색됨")
-    st.dataframe(filtered[['주차장명', '주소', '전화번호', '운영구분명', holi_col, '주차구획수', '기본 주차 요금', '일 최대 요금', '평일운영시작시각', '평일운영종료시각', '토요일운영시작시각', '토요일운영종료시각', '공휴일운영시작시각', '공휴일운영종료시각', '위도', '경도']])
+    st.dataframe(filtered[['주차장명', '주소', '전화번호', '운영구분명',
+                          holi_col if holi_col else df.columns[0], '주차구획수', '기본 주차 요금', '일 최대 요금',
+                          '평일운영시작시각', '평일운영종료시각', '토요일운영시작시각', '토요일운영종료시각',
+                          '공휴일운영시작시각', '공휴일운영종료시각', '위도', '경도'] if holi_col else filtered.columns])
 
     # 지도
     center_lat = filtered['위도'].astype(float).mean() if not filtered.empty else 37.5665
@@ -39,20 +49,18 @@ if uploaded_file:
     m = folium.Map(location=[center_lat, center_lon], zoom_start=13)
 
     for _, row in filtered.iterrows():
-        # Tooltip에 원하는 정보 조합
         tooltip_text = (
             f"총 주차면: {row['주차구획수']} | "
             f"평일: {row['평일운영시작시각']}~{row['평일운영종료시각']} | "
             f"주말: {row['토요일운영시작시각']}~{row['토요일운영종료시각']} | "
             f"기본요금: {row['기본 주차 요금']}"
         )
-
         popup_text = f"""
         <b>{row['주차장명']}</b><br>
         주소: {row['주소']}<br>
         전화번호: {row['전화번호']}<br>
         운영구분: {row['운영구분명']}<br>
-        공휴일 유무료: {row[holi_col]}<br>
+        공휴일 유무료: {row[holi_col] if holi_col else ''}<br>
         기본 주차 요금: {row['기본 주차 요금']}<br>
         일 최대 요금: {row['일 최대 요금']}
         """
