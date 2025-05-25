@@ -13,18 +13,38 @@ def format_time(hhmm):
     m = int(s[2:])
     return f"{h}:{m:02d}"
 
-def calc_fee(row, total_minutes):
+def calc_fee(row, total_minutes, day_type):
+    # 요일별 컬럼명 매핑
+    if day_type == "평일":
+        base_time_col = '기본 주차 시간(분 단위)'
+        base_fee_col = '기본 주차 요금'
+        add_unit_time_col = '추가 단위 시간(분 단위)'
+        add_unit_fee_col = '추가 단위 요금'
+        max_fee_col = '일 최대 요금'
+    elif day_type == "토요일":
+        base_time_col = '토요일 기본 주차 시간(분 단위)'
+        base_fee_col = '토요일 기본 주차 요금'
+        add_unit_time_col = '토요일 추가 단위 시간(분 단위)'
+        add_unit_fee_col = '토요일 추가 단위 요금'
+        max_fee_col = '토요일 일 최대 요금'
+    else:  # 공휴일
+        base_time_col = '공휴일 기본 주차 시간(분 단위)'
+        base_fee_col = '공휴일 기본 주차 요금'
+        add_unit_time_col = '공휴일 추가 단위 시간(분 단위)'
+        add_unit_fee_col = '공휴일 추가 단위 요금'
+        max_fee_col = '공휴일 일 최대 요금'
+
     try:
-        기본시간 = float(row['기본 주차 시간(분 단위)'])
-        기본요금 = float(row['기본 주차 요금'])
-        추가단위시간 = float(row['추가 단위 시간(분 단위)'])
-        추가단위요금 = float(row['추가 단위 요금'])
-        일최대요금 = float(row['일 최대 요금']) if not pd.isnull(row['일 최대 요금']) else None
+        기본시간 = float(row.get(base_time_col, row.get('기본 주차 시간(분 단위)', None)))
+        기본요금 = float(row.get(base_fee_col, row.get('기본 주차 요금', None)))
+        추가단위시간 = float(row.get(add_unit_time_col, row.get('추가 단위 시간(분 단위)', None)))
+        추가단위요금 = float(row.get(add_unit_fee_col, row.get('추가 단위 요금', None)))
+        일최대요금 = float(row.get(max_fee_col, row.get('일 최대 요금', None))) if not pd.isnull(row.get(max_fee_col, row.get('일 최대 요금', None))) else None
         total_minutes = float(total_minutes)
     except Exception as e:
         return float('inf')
 
-    # 필수값이 NaN, 0, 음수인 경우 계산 불가
+    # 필수값 체크
     if any([
         pd.isnull(기본시간), 기본시간 < 0,
         pd.isnull(기본요금), 기본요금 < 0,
@@ -33,42 +53,40 @@ def calc_fee(row, total_minutes):
     ]):
         return float('inf')
 
-    # 기본 시간 이하면 기본요금만
     if total_minutes <= 기본시간:
         fee = 기본요금
     else:
         extra_minutes = total_minutes - 기본시간
-        # 추가단위시간 > 0 이 반드시 보장됨
         units = int((extra_minutes + 추가단위시간 - 1) // 추가단위시간)
         fee = 기본요금 + units * 추가단위요금
 
-    # 일최대요금 있으면 적용
     if 일최대요금 and fee > 일최대요금:
         fee = 일최대요금
 
     return fee
-
-
-
+    
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file, encoding='cp949')
+    st.write("컬럼명 리스트:", df.columns.tolist())
     df = df.dropna(subset=['위도', '경도'])
     df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '')
 
-    # 구 선택
     gu_list = sorted(df['구'].unique())
     selected_gu = st.selectbox("구를 선택하세요", gu_list)
+    keyword = st.text_input("주차장명 검색 (선택)", "")
 
-    # 필터링
     filtered = df[df['구'] == selected_gu]
+    if keyword:
+        filtered = filtered[filtered['주차장명'].str.contains(keyword, case=False, na=False)]
 
     st.markdown("---")
     st.subheader("주차 요금 추천")
+    day_type = st.radio("요일을 선택하세요", ["평일", "토요일", "공휴일"])
     total_minutes = st.number_input("주차할 시간(분)을 입력하세요", min_value=10, step=10, value=60)
 
     # 요금 계산 및 정렬
-    filtered['예상요금'] = filtered.apply(lambda row: calc_fee(row, total_minutes), axis=1)
+    filtered['예상요금'] = filtered.apply(lambda row: calc_fee(row, total_minutes, day_type), axis=1)
     filtered = filtered[filtered['예상요금'] != float('inf')]
     filtered = filtered.sort_values('예상요금')
     filtered['추천'] = ""
