@@ -14,7 +14,6 @@ def format_time(hhmm):
     return f"{h}:{m:02d}"
 
 def calc_fee(row, total_minutes):
-    # 컬럼명은 엑셀 파일에 맞게 조정!
     try:
         기본시간 = float(row['기본 주차 시간(분 단위)'])
         기본요금 = float(row['기본 주차 요금'])
@@ -23,6 +22,10 @@ def calc_fee(row, total_minutes):
         일최대요금 = float(row['일 최대 요금']) if not pd.isnull(row['일 최대 요금']) else None
         total_minutes = float(total_minutes)
     except:
+        return float('inf')
+
+    if 추가단위시간 is None or 추가단위시간 == 0:
+        # 추가단위시간이 0 또는 비정상값이면 요금 계산 불가로 간주
         return float('inf')
 
     if total_minutes <= 기본시간:
@@ -40,7 +43,6 @@ def calc_fee(row, total_minutes):
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file, encoding='cp949')
-    st.write("컬럼명 리스트:", df.columns.tolist())  # 컬럼명 체크용
     df = df.dropna(subset=['위도', '경도'])
     df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '')
 
