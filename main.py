@@ -1,26 +1,59 @@
 import streamlit as st
+import pandas as pd
 import folium
 from streamlit_folium import st_folium
 
-st.title("🗺️ 나만의 위치 북마크 지도")
+# 데이터 불러오기 (파일 업로드 시 주석처리 가능)
+# df = pd.read_csv('서울시 공영주차장 안내 정보.csv', encoding='cp949')
+# Streamlit 파일 업로드 사용시
+uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
+if uploaded_file:
+    df = pd.read_csv(uploaded_file, encoding='cp949')
 
-st.write("아래에 장소 정보를 입력하고 지도에 표시해보세요!")
+    # 위도/경도 없는 행 제외
+    df = df.dropna(subset=['위도', '경도'])
 
-# 장소 입력
-place = st.text_input("장소 이름", value="서울 시청")
-lat = st.number_input("위도 (Latitude)", value=37.5665, format="%.6f")
-lon = st.number_input("경도 (Longitude)", value=126.9780, format="%.6f")
+    # 구명 추출(주소에서 '구' 앞까지)
+    df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '')
 
-# 세션 상태 저장
-if "places" not in st.session_state:
-    st.session_state.places = []
+    st.title("서울시 공영주차장 안내 서비스")
 
-if st.button("지도에 추가하기"):
-    st.session_state.places.append((place, lat, lon))
+    # 구 필터
+    gu_list = sorted(df['구'].unique())
+    selected_gu = st.selectbox("구를 선택하세요", gu_list)
 
-# 지도 그리기
-m = folium.Map(location=[37.5665, 126.9780], zoom_start=6)
-for name, lat, lon in st.session_state.places:
-    folium.Marker([lat, lon], tooltip=name).add_to(m)
+    # 주차장명 검색
+    keyword = st.text_input("주차장명 검색 (선택)", "")
 
-st_folium(m, width=700, height=500)
+    # 필터링
+    filtered = df[df['구'] == selected_gu]
+    if keyword:
+        filtered = filtered[filtered['주차장명'].str.contains(keyword, case=False, na=False)]
+
+    st.write(f"총 {len(filtered)}개 주차장 검색됨")
+    st.dataframe(filtered[['주차장명', '주소', '전화번호', '운영구분명', '기본 주차 요금', '일 최대 요금', '위도', '경도']])
+
+    # 지도
+    center_lat = filtered['위도'].astype(float).mean() if not filtered.empty else 37.5665
+    center_lon = filtered['경도'].astype(float).mean() if not filtered.empty else 126.9780
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=13)
+
+    # 마커 표시
+    for _, row in filtered.iterrows():
+        popup_text = f"""
+        <b>{row['주차장명']}</b><br>
+        주소: {row['주소']}<br>
+        전화번호: {row['전화번호']}<br>
+        운영구분: {row['운영구분명']}<br>
+        기본 주차 요금: {row['기본 주차 요금']}<br>
+        일 최대 요금: {row['일 최대 요금']}
+        """
+        folium.Marker(
+            location=[float(row['위도']), float(row['경도'])],
+            popup=folium.Popup(popup_text, max_width=350, min_width=200),
+            tooltip=row['주차장명']
+        ).add_to(m)
+
+    st_folium(m, width=1000, height=650)
+else:
+    st.info("서울시 공영주차장 안내 정보 CSV 파
