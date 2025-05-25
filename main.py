@@ -6,9 +6,12 @@ from streamlit_folium import st_folium
 st.markdown("""
     <style>
         .main .block-container {
-            max-width: 1500px;
+            max-width: 1300px;
             padding-left: 2rem;
             padding-right: 2rem;
+         h1 {
+            font-size: 2.2rem;
+        }
         }
     </style>
     """, unsafe_allow_html=True)
