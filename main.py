@@ -68,22 +68,18 @@ def calc_fee(row, total_minutes, day_type):
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
 if uploaded_file:
     df = pd.read_csv(uploaded_file, encoding='cp949')
-    st.write("컬럼명 리스트:", df.columns.tolist())
     df = df.dropna(subset=['위도', '경도'])
     df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '')
 
     gu_list = sorted(df['구'].unique())
     selected_gu = st.selectbox("구를 선택하세요", gu_list)
-    keyword = st.text_input("주차장명 검색 (선택)", "")
 
     filtered = df[df['구'] == selected_gu]
-    if keyword:
-        filtered = filtered[filtered['주차장명'].str.contains(keyword, case=False, na=False)]
 
     st.markdown("---")
     st.subheader("주차 요금 추천")
-    day_type = st.radio("요일을 선택하세요", ["평일", "토요일", "공휴일"])
-    total_minutes = st.number_input("주차할 시간(분)을 입력하세요", min_value=10, step=10, value=60)
+    day_type = st.radio("주차할 요일을 선택해주세요", ["평일", "토요일", "공휴일"])
+    total_minutes = st.number_input("예상 주차 시간(분)을 입력해주세요", min_value=10, step=10, value=60)
 
     # 요금 계산 및 정렬
     filtered['예상요금'] = filtered.apply(lambda row: calc_fee(row, total_minutes, day_type), axis=1)
