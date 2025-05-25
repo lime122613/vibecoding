@@ -21,24 +21,27 @@ def calc_fee(row, total_minutes):
         추가단위요금 = float(row['추가 단위 요금'])
         일최대요금 = float(row['일 최대 요금']) if not pd.isnull(row['일 최대 요금']) else None
         total_minutes = float(total_minutes)
-    except:
+    except Exception as e:
         return float('inf')
 
-    if 추가단위시간 is None or 추가단위시간 == 0:
-        # 추가단위시간이 0 또는 비정상값이면 요금 계산 불가로 간주
+    # 추가단위시간이 NaN, 0, 음수 등 비정상 값이면 계산 불가 처리
+    if pd.isnull(추가단위시간) or 추가단위시간 <= 0:
+        return float('inf')
+    if pd.isnull(기본시간) or pd.isnull(기본요금) or pd.isnull(추가단위요금):
         return float('inf')
 
     if total_minutes <= 기본시간:
         fee = 기본요금
     else:
         extra_minutes = total_minutes - 기본시간
-        units = int((extra_minutes + 추가단위시간 - 1) // 추가단위시간)  # 올림
+        units = int(-(-extra_minutes // 추가단위시간))  # 올림 계산, 음수값 방지
         fee = 기본요금 + units * 추가단위요금
 
     if 일최대요금:
         fee = min(fee, 일최대요금)
 
     return fee
+
 
 uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type="csv")
 if uploaded_file:
