@@ -130,6 +130,6 @@ if uploaded_file:
             icon=folium.Icon(color='blue' if row['추천'] == "" else 'red')
         ).add_to(m)
 
-    st_folium(m, width=1000, height=650)
+    st_folium(m, width=1400, height=700)
 else:
     st.info("서울시 공영주차장 안내 정보 CSV 파일을 업로드해 주세요.")
