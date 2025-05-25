@@ -3,7 +3,6 @@ import pandas as pd
 import folium
 from streamlit_folium import st_folium
 
-st.set_page_config(layout="wide")
 st.markdown("""
     <style>
         .main .block-container {
@@ -13,7 +12,7 @@ st.markdown("""
         }
     </style>
     """, unsafe_allow_html=True)
-st.title("🚗서울시 공영주차장 요금 추천 서비스")
+st.title("🚗서울시 공영주차장 요금 추천 서비스🪄")
 def format_time(hhmm):
     if pd.isnull(hhmm):
         return "-"
@@ -139,6 +138,6 @@ if uploaded_file:
             icon=folium.Icon(color='blue' if row['추천'] == "" else 'red')
         ).add_to(m)
 
-    st_folium(m, width=1000, height=650)
+    st_folium(m, width=1200, height=650)
 else:
     st.info("서울시 공영주차장 안내 정보 CSV 파일을 업로드해 주세요.")
