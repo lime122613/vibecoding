@@ -11,7 +11,7 @@ st.markdown("""
             padding-right: 2rem;
          }
          h1 {
-            font-size: 2.2rem;
+            font-size: 2rem;
          }
     </style>
     """, unsafe_allow_html=True)
