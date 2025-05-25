@@ -8,8 +8,8 @@ st.markdown("""
     <style>
         .main .block-container {
             max-width: 1000px;
-            padding-left: 2.5rem;
-            padding-right: 2.5rem;
+            padding-left: 3rem;
+            padding-right: 3rem;
         }
     </style>
     """, unsafe_allow_html=True)
