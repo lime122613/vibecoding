@@ -62,8 +62,6 @@ if uploaded_file:
 
     # 필터링
     filtered = df[df['구'] == selected_gu]
-    if keyword:
-        filtered = filtered[filtered['주차장명'].str.contains(keyword, case=False, na=False)]
 
     st.markdown("---")
     st.subheader("주차 요금 추천")
