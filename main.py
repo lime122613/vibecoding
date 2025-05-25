@@ -64,7 +64,7 @@ def calc_fee(row, total_minutes, day_type):
 
     return fee
     
-GITHUB_RAW_URL = "https://github.com/lime122613/vibecoding/blob/main/%EC%84%9C%EC%9A%B8%EC%8B%9C%20%EA%B3%B5%EC%98%81%EC%A3%BC%EC%B0%A8%EC%9E%A5%20%EC%95%88%EB%82%B4%20%EC%A0%95%EB%B3%B4.csv"
+GITHUB_RAW_URL = "https://raw.github.com/lime122613/vibecoding/blob/main/%EC%84%9C%EC%9A%B8%EC%8B%9C%20%EA%B3%B5%EC%98%81%EC%A3%BC%EC%B0%A8%EC%9E%A5%20%EC%95%88%EB%82%B4%20%EC%A0%95%EB%B3%B4.csv"
 df = pd.read_csv(GITHUB_RAW_URL, encoding='cp949')
 if uploaded_file:
     df = pd.read_csv(uploaded_file, encoding='cp949')
