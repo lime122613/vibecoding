@@ -60,9 +60,6 @@ if uploaded_file:
     gu_list = sorted(df['구'].unique())
     selected_gu = st.selectbox("구를 선택하세요", gu_list)
 
-    # 주차장명 검색
-    keyword = st.text_input("주차장명 검색 (선택)", "")
-
     # 필터링
     filtered = df[df['구'] == selected_gu]
     if keyword:
@@ -91,12 +88,11 @@ if uploaded_file:
 
     for _, row in filtered.iterrows():
         tooltip_text = (
-            f"예상요금: {int(row['예상요금'])}원\n"
-            f"총 주차면: {int(row['총 주차면'])}개\n"
-            f"기본 주차 요금: {int(row['기본 주차 요금'])}원 ({int(row['기본 주차 시간(분 단위)'])}분)\n"
-            f"평일: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}\n"
-            f"주말: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}\n"
-            f"공휴일: {format_time(row['공휴일 운영 시작시각(HHMM)'])} ~ {format_time(row['공휴일 운영 종료시각(HHMM)'])}\n"
+            f"총 주차면: {int(row['총 주차면'])}개<br>"
+            f"기본 주차 요금: {int(row['기본 주차 요금'])}원 ({int(row['기본 주차 시간(분 단위)'])}분)<br>"
+            f"평일: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}<br>"
+            f"주말: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}<br>"
+            f"공휴일: {format_time(row['공휴일 운영 시작시각(HHMM)'])} ~ {format_time(row['공휴일 운영 종료시각(HHMM)'])}<br>"
         )
         popup_text = (
             f"<b>{row['주차장명']}</b><br>"
