@@ -25,11 +25,11 @@ if uploaded_file:
         filtered = filtered[filtered['주차장명'].str.contains(keyword, case=False, na=False)]
 
     st.write(f"총 {len(filtered)}개 주차장 검색됨")
-    st.dataframe(filtered[['주차장명', '주소', '전화번호', '운영구분명', '주차구획수',
+    st.dataframe(filtered[['주차장명', '주소', '전화번호', '운영구분명', '총 주차면',
                           '기본 주차 요금', '일 최대 요금',
-                          '평일운영시작시각', '평일운영종료시각',
-                          '토요일운영시작시각', '토요일운영종료시각',
-                          '공휴일운영시작시각', '공휴일운영종료시각', '위도', '경도']])
+                          '평일 운영 시작시각(HHMM)', '평일 운영 종료시각(HHMM)',
+                          '주말 운영 시작시각(HHMM)', '주말 운영 종료시각(HHMM)',
+                          '공휴일 운영 시작시각(HHMM)', '공휴일 운영 종료시각(HHMM)', '위도', '경도']])
 
     # 지도
     center_lat = filtered['위도'].astype(float).mean() if not filtered.empty else 37.5665
@@ -39,8 +39,9 @@ if uploaded_file:
     for _, row in filtered.iterrows():
         tooltip_text = (
             f"총 주차면: {row['주차구획수']} | "
-            f"평일: {row['평일운영시작시각']}~{row['평일운영종료시각']} | "
-            f"주말: {row['토요일운영시작시각']}~{row['토요일운영종료시각']} | "
+            f"평일: {row['평일 운영 시작시각(HHMM)']}~{row['평일 운영 종료시각(HHMM)']} | "
+            f"주말: {row['주말 운영 시작시각(HHMM)']}~{row['주말 운영 종료시각(HHMM)']} | "
+            f"공휴일: {row['공휴일 운영 시작시각(HHMM)']}~{row['공휴일 운영 종료시각(HHMM)']} | "
             f"기본요금: {row['기본 주차 요금']}"
         )
         popup_text = f"""
