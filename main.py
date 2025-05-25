@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
-st.set_page_config(layout="wide")
-st.title("🚗서울시 공영주차장 요금 추천 서비스🪄")
+st.title("🚗서울시 공영주차장 요금 추천 서비스")
 
 def format_time(hhmm):
     if pd.isnull(hhmm):
@@ -130,6 +129,6 @@ if uploaded_file:
             icon=folium.Icon(color='blue' if row['추천'] == "" else 'red')
         ).add_to(m)
 
-    st_folium(m, width=1400, height=700)
+    st_folium(m, width=1000, height=650)
 else:
     st.info("서울시 공영주차장 안내 정보 CSV 파일을 업로드해 주세요.")
