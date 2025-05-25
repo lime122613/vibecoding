@@ -1,59 +1,48 @@
 import streamlit as st
+import yfinance as yf
 import pandas as pd
 import plotly.graph_objs as go
+from datetime import datetime, timedelta
 
-st.title("서울특별시 연령별 남녀 인구 피라미드 시각화 (2025년 4월)")
+st.title("글로벌 시가총액 TOP10 기업의 최근 1년간 주가 변화")
 
-uploaded_file = st.file_uploader("남녀구분 연령별 인구 파일(csv)을 업로드하세요", type=["csv"])
+# 시가총액 기준 TOP10 티커와 이름
+top10 = {
+    'AAPL': 'Apple',
+    'MSFT': 'Microsoft',
+    'GOOGL': 'Alphabet (Google)',
+    'AMZN': 'Amazon',
+    'NVDA': 'Nvidia',
+    'META': 'Meta Platforms',
+    'BRK-B': 'Berkshire Hathaway',
+    'TSLA': 'Tesla',
+    'LLY': 'Eli Lilly',
+    'TSM': 'TSMC'
+}
 
-if uploaded_file is not None:
-    # 데이터프레임 불러오기 (euc-kr 인코딩)
-    df = pd.read_csv(uploaded_file, encoding="euc-kr")
-    
-    # 서울 전체(첫 행)만 사용
-    row = df.iloc[0]
-    ages = [f"{i}세" for i in range(0, 100)] + ["100세 이상"]
-    male_cols = [col for col in df.columns if "_남_" in col and col.split('_')[-1] in ages]
-    female_cols = [col for col in df.columns if "_여_" in col and col.split('_')[-1] in ages]
-    age_labels = [col.split('_')[-1] for col in male_cols]
-    
-    # 숫자 변환 함수
-    def to_int(val):
-        if isinstance(val, str):
-            return int(val.replace(',', ''))
-        return int(val)
-    male_pop = [to_int(row[c]) for c in male_cols]
-    female_pop = [to_int(row[c]) for c in female_cols]
+st.write("조회 기업:")
+st.write(", ".join([f"{v}({k})" for k, v in top10.items()]))
 
-    # Plotly 인구 피라미드
-    fig = go.Figure()
-    fig.add_trace(go.Bar(
-        y=age_labels,
-        x=[-v for v in male_pop],
-        name='남',
-        orientation='h',
-        marker_color='blue'
+end = datetime.today()
+start = end - timedelta(days=365)
+
+with st.spinner("데이터를 가져오고 있습니다..."):
+    data = yf.download(list(top10.keys()), start=start, end=end)["Adj Close"]
+
+# 데이터 전처리
+data = data.fillna(method="ffill")
+
+# Plotly 라인 차트
+fig = go.Figure()
+for ticker, name in top10.items():
+    fig.add_trace(go.Scatter(
+        x=data.index, y=data[ticker], mode='lines', name=name
     ))
-    fig.add_trace(go.Bar(
-        y=age_labels,
-        x=female_pop,
-        name='여',
-        orientation='h',
-        marker_color='pink'
-    ))
-    fig.update_layout(
-        title='서울특별시 연령별 남녀 인구 피라미드 (2025년 4월)',
-        barmode='relative',
-        xaxis=dict(
-            title='인구수',
-            tickvals=[-40000, -20000, 0, 20000, 40000, 60000],
-            ticktext=[str(abs(v)) for v in [-40000, -20000, 0, 20000, 40000, 60000]],
-        ),
-        yaxis=dict(title='연령'),
-        legend=dict(title='성별'),
-        height=900
-    )
-    st.plotly_chart(fig, use_container_width=True)
-else:
-    st.info("csv 파일을 업로드하면 인구 피라미드가 자동으로 생성됩니다.")
-
+fig.update_layout(
+    title='글로벌 시가총액 TOP10 기업 주가 변화 (최근 1년)',
+    xaxis_title='날짜',
+    yaxis_title='종가(USD)',
+    legend_title='기업명',
+    height=600
+)
+st.plotly_chart(fig, use_container_width=True)
