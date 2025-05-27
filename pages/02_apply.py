@@ -9,11 +9,11 @@ scope = [
     "https://www.googleapis.com/auth/drive"
 ]
 creds = Credentials.from_service_account_file(
-    'google_service_account.json',  # 서비스 계정 키 파일명
+    'lime-159107-abda40e8376d.json',  # 서비스 계정 키 파일명
     scopes=scope
 )
 gc = gspread.authorize(creds)
-sh = gc.open("상담예약시트명")  # 구글 시트명
+sh = gc.open("학부모상담예약")  # 구글 시트명
 worksheet = sh.sheet1
 
 # 이미 신청된 시간대 불러오기
