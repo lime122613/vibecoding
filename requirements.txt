@@ -3,3 +3,6 @@ streamlit_folium
 pandas
 plotly
 yfinance
+gspread
+google-auth
+pandas
