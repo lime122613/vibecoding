@@ -5,12 +5,18 @@ from streamlit_folium import st_folium
 
 st.title("🚗서울시 공영주차장 요금 추천앱🪄")
 def format_time(hhmm):
-    if pd.isnull(hhmm):
+    if pd.isna(hhmm):
         return "-"
-    s = str(hhmm).zfill(4)
-    h = int(s[:2])
-    m = int(s[2:])
-    return f"{h}:{m:02d}"
+    try:
+        # '900', '0900', 900, 900.0, '9:00' 등도 최대한 흡수
+        v = int(float(str(hhmm).replace(":", "").strip()))
+        h, m = divmod(v, 100)
+        if h < 0 or h > 24 or m < 0 or m >= 60:
+            return "-"
+        return f"{h:02d}:{m:02d}"
+    except Exception:
+        return "-"
+
 
 def calc_fee(row, total_minutes, day_type):
     # 요일별 컬럼명 매핑
