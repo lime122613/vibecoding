@@ -8,7 +8,8 @@ def format_time(hhmm):
     if pd.isnull(hhmm): 
         return "-" 
     s = str(hhmm).zfill(4) 
-    h = int(s[:2]) m = int(s[2:]) 
+    h = int(s[:2]) 
+    m = int(s[2:]) 
     return f"{h}:{m:02d}"
 
 def calc_fee(row, total_minutes, day_type):
