@@ -66,17 +66,12 @@ def calc_fee(row, total_minutes, day_type):
     return fee
 
 # 데이터
-df = pd.read_csv(
-    "https://raw.githubusercontent.com/lime122613/vibecoding/main/seoul_public_parking.csv",
-    encoding="cp949"
-)
-df = df.dropna(subset=['위도', '경도'])
-df['구'] = df['주소'].apply(extract_gu)
-
-gu_list = sorted([g for g in df['구'].unique() if g])
-selected_gu = st.selectbox("구를 선택하세요", gu_list)
-
-filtered = df[df['구'] == selected_gu].copy()  # copy()로 체인할당 경고 및 잠재 버그 방지
+df = pd.read_csv("https://raw.githubusercontent.com/lime122613/vibecoding/main/seoul_public_parking.csv", encoding="cp949") 
+df = df.dropna(subset=['위도', '경도']) 
+df['구'] = df['주소'].apply(lambda x: x.split()[0] if '구' in x else '') 
+gu_list = sorted(df['구'].unique()) 
+selected_gu = st.selectbox("구를 선택하세요", gu_list) 
+filtered = df[df['구'] == selected_gu]
 
 st.markdown("---")
 st.subheader("💸주차 요금 비교하기")
