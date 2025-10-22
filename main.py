@@ -102,24 +102,23 @@ m = folium.Map(location=[center_lat, center_lon], zoom_start=13)
 
 for _, row in filtered.iterrows():
     tooltip_text = (
-        f"총 주차면: {to_int_safe(row.get('총 주차면'))}개<br>"
-        f"기본 주차 요금: {to_int_safe(row.get('기본 주차 요금'))}원 "
-        f"({to_int_safe(row.get('기본 주차 시간(분 단위)'))}분당)<br>"
-        f"평일: {format_time(row.get('평일 운영 시작시각(HHMM)'))} ~ {format_time(row.get('평일 운영 종료시각(HHMM)'))}<br>"
-        f"주말: {format_time(row.get('주말 운영 시작시각(HHMM)'))} ~ {format_time(row.get('주말 운영 종료시각(HHMM)'))}<br>"
-        f"공휴일: {format_time(row.get('공휴일 운영 시작시각(HHMM)'))} ~ {format_time(row.get('공휴일 운영 종료시각(HHMM)'))}<br>"
+        f"총 주차면: {int(row['총 주차면'])}개<br>"
+        f"기본 주차 요금: {int(row['기본 주차 요금'])}원 ({int(row['기본 주차 시간(분 단위)'])}분당)<br>
+        " f"평일: {format_time(row['평일 운영 시작시각(HHMM)'])} ~ {format_time(row['평일 운영 종료시각(HHMM)'])}<br>
+        " f"주말: {format_time(row['주말 운영 시작시각(HHMM)'])} ~ {format_time(row['주말 운영 종료시각(HHMM)'])}<br>
+        " f"공휴일: {format_time(row['공휴일 운영 시작시각(HHMM)'])} ~ {format_time(row['공휴일 운영 종료시각(HHMM)'])}<br>"
     )
     popup_text = (
-        f"<b>{row.get('주차장명','')}</b><br>"
-        f"주소: {row.get('주소','')}<br>"
-        f"전화번호: {row.get('전화번호','')}<br>"
-        f"운영구분: {row.get('운영구분명','')}<br>"
-        f"예상요금: {to_int_safe(row.get('예상요금'))}원<br>"
-        f"기본 주차 시간: {to_int_safe(row.get('기본 주차 시간(분 단위)'))}분<br>"
-        f"기본 주차 요금: {to_int_safe(row.get('기본 주차 요금'))}원<br>"
-        f"추가 단위 요금: {to_int_safe(row.get('추가 단위 요금'))}원<br>"
-        f"추가 단위 시간: {to_int_safe(row.get('추가 단위 시간(분 단위)'))}분<br>"
-        f"일 최대 요금: {to_int_safe(row.get('일 최대 요금'), default='-')}"
+        f"<b>{row['주차장명']}</b><br>"
+        f"주소: {row['주소']}<br>" 
+        f"전화번호: {row['전화번호']}<br>" 
+        f"운영구분: {row['운영구분명']}<br>" 
+        f"예상요금: {int(row['예상요금'])}원<br>" 
+        f"기본 주차 시간: {row['기본 주차 시간(분 단위)']}분<br>" 
+        f"기본 주차 요금: {row['기본 주차 요금']}원<br>" 
+        f"추가 단위 요금: {row['추가 단위 요금']}원<br>" 
+        f"추가 단위 시간: {row['추가 단위 시간(분 단위)']}분<br>" 
+        f"일 최대 요금: {row['일 최대 요금']}"
     )
     folium.Marker(
         location=[float(row['위도']), float(row['경도'])],
